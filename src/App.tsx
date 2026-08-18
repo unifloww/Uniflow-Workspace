@@ -25,7 +25,11 @@ function AppContent() {
     // Check if it's a rotator subdomain
     if (hostname === 'wa.uniflow.my.id' || hostname === 'info.uniflow.my.id') {
       const slug = path.replace(/^\//, ''); // remove leading slash
-      setPublicSlug(slug || 'not-found');
+      if (!slug) {
+        window.location.href = 'https://app.uniflow.my.id/';
+        return;
+      }
+      setPublicSlug(slug);
     } 
     // Fallback for app.uniflow.my.id or preview URLs: /r/slug
     else if (path.startsWith('/r/')) {
