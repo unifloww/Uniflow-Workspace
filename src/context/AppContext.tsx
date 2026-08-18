@@ -45,6 +45,7 @@ export type Campaign = {
   periodClicks: number;
   totalClicks: number;
   isActive: boolean;
+  message?: string;
   adminStats: AdminStat[];
   useForm: boolean;
   formTitle: string;

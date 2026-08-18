@@ -318,7 +318,7 @@ export default function AdminRotator() {
                       <p className="text-[11px] text-gray-500">{admin.nickname}</p>
                     </td>
                     <td className="p-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
-                      +62{admin.whatsapp}
+                      +{admin.countryCode || '62'}{admin.whatsapp}
                     </td>
                     <td className="p-4 md:px-6 py-4 whitespace-nowrap">
                       <p className="text-sm font-bold text-gray-800">

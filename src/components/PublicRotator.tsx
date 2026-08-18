@@ -139,6 +139,11 @@ export default function PublicRotator({ slug }: { slug: string }) {
         adminStats: newStats
       });
 
+      // Update global admin stats
+      await updateDoc(doc(db, 'admins', selectedAdmin.id), {
+        'stats.forwarded': increment(1)
+      });
+
       if (leadData) {
         await addDoc(collection(db, 'leads'), {
           ...leadData,
@@ -165,7 +170,7 @@ export default function PublicRotator({ slug }: { slug: string }) {
        }
     }
     
-    let textMessage = selectedAdmin.message || `Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}.`;
+    let textMessage = campaign.message || selectedAdmin.message || `Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}.`;
     textMessage = textMessage.replace(/{nickname}/g, selectedAdmin.nickname || '');
     textMessage = textMessage.replace(/{campaign}/g, campaign.name || '');
     
@@ -222,12 +227,12 @@ export default function PublicRotator({ slug }: { slug: string }) {
 
   return (
     <div className="min-h-screen bg-[#f3f6f9] flex flex-col items-center justify-center p-4 font-sans selection:bg-[#148e73] selection:text-white">
-      <div className="mb-6 flex items-center justify-center gap-3">
-        <img src="https://firebasestorage.googleapis.com/v0/b/uniflow/o/Uniflowlogo.jpg?alt=media&token=13a47214-7471-49a8-a272-9664cdfe700f" alt="Uniflow" className="h-6 md:h-7 object-contain mix-blend-multiply" />
-        <span className="text-gray-300 text-2xl font-light">|</span>
-        <img src="https://rkgroupproperti.com/wp-content/uploads/2026/05/WA-ROTATOR-LOGO-scaled.png" alt="WA Rotator" className="h-4 md:h-5 object-contain opacity-80" />
+      <div className="mb-8 flex items-center justify-center gap-4">
+        <img src="https://firebasestorage.googleapis.com/v0/b/uniflow/o/Uniflowlogo.jpg?alt=media&token=13a47214-7471-49a8-a272-9664cdfe700f" alt="Uniflow" className="h-10 md:h-12 object-contain mix-blend-multiply" />
+        <span className="text-gray-300 text-3xl font-light mb-1">|</span>
+        <img src="https://rkgroupproperti.com/wp-content/uploads/2026/05/WA-ROTATOR-LOGO-scaled.png" alt="WA Rotator" className="h-8 md:h-10 object-contain opacity-80" />
       </div>
-      <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative overflow-hidden border border-gray-100">
+      <div className="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl relative overflow-hidden border border-gray-100">
         
         {error ? (
           <div className="text-center py-8">

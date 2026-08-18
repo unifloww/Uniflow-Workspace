@@ -38,7 +38,8 @@ export default function LinkRotator() {
     useSticky: true,
     stickyDays: 30,
     useForm: false,
-    formTitle: 'Isi Data Dulu Ya'
+    formTitle: 'Isi Data Dulu Ya',
+    message: 'Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}.'
   };
   const [formData, setFormData] = useState(defaultForm);
 
@@ -54,6 +55,7 @@ export default function LinkRotator() {
         stickyDays: camp.stickyDays,
         useForm: camp.useForm,
         formTitle: camp.formTitle || 'Isi Data Dulu Ya',
+        message: camp.message || 'Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}.',
         selectedAdmins: camp.adminStats.map(s => ({ id: s.id, weight: s.weight || 1 }))
       });
     } else {
@@ -112,6 +114,7 @@ export default function LinkRotator() {
         stickyDays: formData.stickyDays,
         useForm: formData.useForm,
         formTitle: formData.formTitle,
+        message: formData.message,
         adminStats: formData.selectedAdmins.map(sa => {
           const adminInfo = admins.find(a => a.id === sa.id);
           const existingStat = existingCampaign.adminStats.find(as => as.id === sa.id);
@@ -142,6 +145,7 @@ export default function LinkRotator() {
         isActive: true,
         useForm: formData.useForm,
         formTitle: formData.formTitle,
+        message: formData.message,
         dailyClicks: {},
         adminStats: formData.selectedAdmins.map(sa => {
           const adminInfo = admins.find(a => a.id === sa.id);
@@ -333,8 +337,10 @@ export default function LinkRotator() {
 
                 <textarea 
                   rows={4} 
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#148e73]/20 focus:border-[#148e73] text-sm text-gray-700 outline-none transition-shadow resize-none"
-                  defaultValue="Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}."
+                  placeholder="Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}."
                 ></textarea>
 
                 {/* Pilih Admin Block */}
@@ -371,7 +377,7 @@ export default function LinkRotator() {
                                 />
                                 <div>
                                   <p className="text-sm font-bold text-gray-800">{admin.name}</p>
-                                  <p className="text-[11px] text-gray-500 font-medium">+{admin.whatsapp}</p>
+                                  <p className="text-[11px] text-gray-500 font-medium">+{admin.countryCode || '62'}{admin.whatsapp}</p>
                                 </div>
                               </label>
                               {isSelected && formData.method === 'bobot' && (
