@@ -24,14 +24,23 @@ export default function PublicRotator({ slug }: { slug: string }) {
         if (!querySnapshot.empty) {
           const campDoc = querySnapshot.docs[0];
           const campData = { id: campDoc.id, ...campDoc.data() } as Campaign;
+          
+          if (!campData.isActive) {
+             setCampaign(null);
+             setIsLoading(false);
+             return;
+          }
+
           setCampaign(campData);
 
           // Fetch admins for this user
           if (campData.userId) {
             const adminsRef = collection(db, 'admins');
-            const adminsQuery = query(adminsRef, where('userId', '==', campData.userId), where('isActive', '==', true));
+            const adminsQuery = query(adminsRef, where('userId', '==', campData.userId));
             const adminsSnapshot = await getDocs(adminsQuery);
-            const adminsData = adminsSnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Admin));
+            const adminsData = adminsSnapshot.docs
+              .map(d => ({ id: d.id, ...d.data() } as Admin))
+              .filter(a => a.isActive);
             setAdmins(adminsData);
           }
         }
