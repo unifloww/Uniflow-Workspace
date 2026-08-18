@@ -153,18 +153,34 @@ export default function PublicRotator({ slug }: { slug: string }) {
 
     // 4. Construct WhatsApp URL
     let waPhone = selectedAdmin.whatsapp.replace(/[^0-9]/g, '');
-    if (waPhone.startsWith('0')) waPhone = '62' + waPhone.substring(1);
+    let countryCode = selectedAdmin.countryCode || '62';
+    if (waPhone.startsWith('0')) {
+       waPhone = countryCode + waPhone.substring(1);
+    } else if (!waPhone.startsWith(countryCode)) {
+       // if it doesn't start with 0 and doesn't have country code, prepend it
+       // Wait, if user typed 85155441987 and selected +62, waPhone won't start with 62.
+       // It's safer to always ensure it starts with country code if it's a valid local number format.
+       if (waPhone.length >= 8 && waPhone.length <= 15 && !waPhone.startsWith(countryCode)) {
+           waPhone = countryCode + waPhone;
+       }
+    }
     
-    let textMessage = selectedAdmin.message || `Halo, saya tertarik dengan ${campaign.name}`;
-    textMessage = textMessage.replace('{nickname}', selectedAdmin.nickname || '');
-    textMessage = textMessage.replace('{campaign}', campaign.name || '');
+    let textMessage = selectedAdmin.message || `Halo {nickname}, saya tertarik dengan {campaign} pada {tanggal} {waktu}.`;
+    textMessage = textMessage.replace(/{nickname}/g, selectedAdmin.nickname || '');
+    textMessage = textMessage.replace(/{campaign}/g, campaign.name || '');
+    
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    textMessage = textMessage.replace(/{tanggal}/g, dateStr);
+    textMessage = textMessage.replace(/{waktu}/g, timeStr);
     
     if (leadData && leadData.name) {
       textMessage += `\n\n*Data Customer:*\nNama: ${leadData.name}\nWA: ${leadData.whatsapp}`;
       if (leadData.message) textMessage += `\nCatatan: ${leadData.message}`;
     }
 
-    const waUrl = `https://wa.me/${waPhone}?text=${encodeURIComponent(textMessage)}`;
+    const waUrl = `https://api.whatsapp.com/send/?phone=${waPhone}&text=${encodeURIComponent(textMessage)}`;
     
     window.location.href = waUrl;
   };
@@ -206,8 +222,10 @@ export default function PublicRotator({ slug }: { slug: string }) {
 
   return (
     <div className="min-h-screen bg-[#f3f6f9] flex flex-col items-center justify-center p-4 font-sans selection:bg-[#148e73] selection:text-white">
-      <div className="mb-6 flex flex-col items-center text-gray-500">
-        <h1 className="text-2xl font-black text-[#148e73] tracking-tighter">Uniflow <span className="text-gray-400 font-medium">| WA Rotator</span></h1>
+      <div className="mb-6 flex items-center justify-center gap-3">
+        <img src="https://firebasestorage.googleapis.com/v0/b/uniflow/o/Uniflowlogo.jpg?alt=media&token=13a47214-7471-49a8-a272-9664cdfe700f" alt="Uniflow" className="h-6 md:h-7 object-contain mix-blend-multiply" />
+        <span className="text-gray-300 text-2xl font-light">|</span>
+        <img src="https://rkgroupproperti.com/wp-content/uploads/2026/05/WA-ROTATOR-LOGO-scaled.png" alt="WA Rotator" className="h-4 md:h-5 object-contain opacity-80" />
       </div>
       <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative overflow-hidden border border-gray-100">
         
@@ -221,8 +239,12 @@ export default function PublicRotator({ slug }: { slug: string }) {
           </div>
         ) : isRedirecting ? (
           <div className="text-center py-10">
-            <div className="w-20 h-20 bg-[#ebfcf6] text-[#10b981] rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce shadow-inner">
-              <Play size={36} className="ml-1" fill="currentColor" />
+            <div className="relative w-24 h-24 mx-auto mb-8">
+              <div className="absolute inset-0 bg-[#10b981] rounded-full animate-ping opacity-20"></div>
+              <div className="absolute inset-2 bg-[#10b981] rounded-full animate-pulse opacity-30"></div>
+              <div className="relative w-full h-full bg-[#ebfcf6] text-[#10b981] rounded-full flex items-center justify-center shadow-inner z-10">
+                <Play size={40} className="ml-1" fill="currentColor" />
+              </div>
             </div>
             <h3 className="text-xl font-extrabold text-gray-900 mb-3 tracking-tight">Mengarahkan ke WhatsApp...</h3>
             <p className="text-sm text-gray-500 max-w-[250px] mx-auto leading-relaxed">

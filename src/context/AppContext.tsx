@@ -8,6 +8,7 @@ export type Admin = {
   userId?: string;
   name: string;
   nickname: string;
+  countryCode?: string;
   whatsapp: string;
   is24Hours: boolean;
   startTime: string;

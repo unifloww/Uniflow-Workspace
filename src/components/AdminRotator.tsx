@@ -9,6 +9,7 @@ const allDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 const defaultForm = {
   name: '',
   nickname: '',
+  countryCode: '62',
   whatsapp: '',
   is24Hours: true,
   startTime: '08:00',
@@ -35,6 +36,7 @@ export default function AdminRotator() {
       setFormData({
         name: admin.name,
         nickname: admin.nickname,
+        countryCode: admin.countryCode || '62',
         whatsapp: admin.whatsapp,
         is24Hours: admin.is24Hours,
         startTime: admin.startTime,
@@ -173,8 +175,17 @@ export default function AdminRotator() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-center">
               <div className="flex gap-2">
-                <select className="px-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#148e73]/20 focus:border-[#148e73] text-sm text-gray-700 bg-gray-50 cursor-not-allowed" disabled>
-                  <option>ID +62</option>
+                <select 
+                  className="px-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#148e73]/20 focus:border-[#148e73] text-sm text-gray-700 bg-white" 
+                  value={formData.countryCode}
+                  onChange={e => setFormData({...formData, countryCode: e.target.value})}
+                >
+                  <option value="62">🇮🇩 ID +62</option>
+                  <option value="60">🇲🇾 MY +60</option>
+                  <option value="65">🇸🇬 SG +65</option>
+                  <option value="82">🇰🇷 KR +82</option>
+                  <option value="86">🇨🇳 CN +86</option>
+                  <option value="81">🇯🇵 JP +81</option>
                 </select>
                 <input 
                   type="text" 
