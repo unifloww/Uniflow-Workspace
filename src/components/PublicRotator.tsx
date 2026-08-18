@@ -54,14 +54,14 @@ export default function PublicRotator({ slug }: { slug: string }) {
   }, [slug]);
 
   useEffect(() => {
-    if (campaign && !campaign.useForm) {
+    if (campaign && !campaign.useForm && admins.length > 0) {
       setIsRedirecting(true);
       const timer = setTimeout(() => {
         executeRotation();
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [campaign]);
+  }, [campaign, admins]);
 
   const executeRotation = async (leadData?: any) => {
     if (!campaign) return;
@@ -205,7 +205,10 @@ export default function PublicRotator({ slug }: { slug: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f6f9] flex items-center justify-center p-4 font-sans selection:bg-[#148e73] selection:text-white">
+    <div className="min-h-screen bg-[#f3f6f9] flex flex-col items-center justify-center p-4 font-sans selection:bg-[#148e73] selection:text-white">
+      <div className="mb-6 flex flex-col items-center text-gray-500">
+        <h1 className="text-2xl font-black text-[#148e73] tracking-tighter">Uniflow <span className="text-gray-400 font-medium">| WA Rotator</span></h1>
+      </div>
       <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative overflow-hidden border border-gray-100">
         
         {error ? (
