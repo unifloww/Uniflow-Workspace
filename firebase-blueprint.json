@@ -1,0 +1,75 @@
+{
+  "rulesVersion": "2",
+  "blueprint": {
+    "users": {
+      "$uid": {
+        "__description": "User profiles",
+        "email": "string",
+        "createdAt": "timestamp"
+      }
+    },
+    "admins": {
+      "$adminId": {
+        "__description": "Admin entries created by users",
+        "userId": "string",
+        "name": "string",
+        "nickname": "string",
+        "whatsapp": "string",
+        "is24Hours": "boolean",
+        "startTime": "string",
+        "endTime": "string",
+        "days": ["string"],
+        "message": "string",
+        "stats": {
+          "forwarded": "number",
+          "unforwarded": "number",
+          "invalid": "number"
+        },
+        "isActive": "boolean",
+        "createdAt": "timestamp"
+      }
+    },
+    "campaigns": {
+      "$campaignId": {
+        "__description": "Campaigns created by users",
+        "userId": "string",
+        "name": "string",
+        "slug": "string",
+        "url": "string",
+        "method": "string",
+        "isSticky": "boolean",
+        "stickyDays": "number",
+        "periodClicks": "number",
+        "totalClicks": "number",
+        "isActive": "boolean",
+        "useForm": "boolean",
+        "formTitle": "string",
+        "adminStats": [
+          {
+            "id": "string",
+            "name": "string",
+            "clicks": "number",
+            "invalid": "number",
+            "allTimeConnected": "number",
+            "allTimeRequests": "number",
+            "weight": "number"
+          }
+        ],
+        "createdAt": "timestamp"
+      }
+    },
+    "leads": {
+      "$leadId": {
+        "__description": "Leads submitted via campaigns",
+        "campaignId": "string",
+        "userId": "string",
+        "name": "string",
+        "whatsapp": "string",
+        "message": "string",
+        "campaign": "string",
+        "date": "string",
+        "createdAt": "timestamp"
+      }
+    }
+  }
+}

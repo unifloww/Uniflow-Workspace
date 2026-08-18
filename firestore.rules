@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /admins/{adminId} {
+      // Allow read if active (for public rotator) or if owner
+      allow read: if resource.data.isActive == true || isOwner(resource.data.userId);
+      // Allow create if auth and sets correct userId
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // Allow update/delete if owner
+      allow update, delete: if isOwner(resource.data.userId);
+    }
+
+    match /campaigns/{campaignId} {
+      allow read: if resource.data.isActive == true || isOwner(resource.data.userId);
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // Allow owner to update everything. Allow public to update stats only.
+      allow update: if isOwner(resource.data.userId) || 
+                    (
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['periodClicks', 'totalClicks', 'dailyClicks', 'adminStats', 'deviceStats', 'hourlyStats', 'locationStats'])
+                    );
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    match /leads/{leadId} {
+      // Anyone can create a lead (from public form)
+      allow create: if true;
+      // Only the owner of the campaign can read/update their leads
+      allow read, update, delete: if isOwner(resource.data.userId);
+    }
+  }
+}
