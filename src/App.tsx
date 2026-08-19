@@ -6,9 +6,19 @@ import AdminRotator from './components/AdminRotator';
 import LinkRotator from './components/LinkRotator';
 import DataForm from './components/DataForm';
 import PublicRotator from './components/PublicRotator';
+import PublicSmartLink from './components/PublicSmartLink';
 import ProfileSettings from './components/ProfileSettings';
 import Analytics from './components/Analytics';
 import Auth from './components/Auth';
+import WaBuilder from './components/WaBuilder';
+import SmartLinkTools from './components/SmartLinkTools';
+import BioLinkBuilder from './components/BioLinkBuilder';
+
+import ProductsManager from './components/ProductsManager';
+import OrdersManager from './components/OrdersManager';
+import WalletManager from './components/WalletManager';
+
+import PublicBioLink from './components/PublicBioLink';
 import { AppProvider, useAppContext } from './context/AppContext';
 
 function AppContent() {
@@ -17,10 +27,30 @@ function AppContent() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [publicSlug, setPublicSlug] = useState<string | null>(null);
+  const [publicSmartSlug, setPublicSmartSlug] = useState<string | null>(null);
+  const [publicBioUsername, setPublicBioUsername] = useState<string | null>(null);
 
   useEffect(() => {
     const hostname = window.location.hostname;
     const path = window.location.pathname;
+    
+    // Check if it's a smartlink
+    if (path.startsWith('/s/')) {
+      const slug = path.split('/s/')[1];
+      if (slug) {
+        setPublicSmartSlug(slug);
+        return;
+      }
+    }
+
+    // Check if it's a bio link
+    if (path.startsWith('/@')) {
+      const username = path.split('/@')[1];
+      if (username) {
+        setPublicBioUsername(username);
+        return;
+      }
+    }
     
     // Check if it's a rotator subdomain
     if (hostname === 'wa.uniflow.my.id' || hostname === 'info.uniflow.my.id') {
@@ -42,6 +72,14 @@ function AppContent() {
 
   if (publicSlug) {
     return <PublicRotator slug={publicSlug} />;
+  }
+
+  if (publicSmartSlug) {
+    return <PublicSmartLink slug={publicSmartSlug} />;
+  }
+
+  if (publicBioUsername) {
+    return <PublicBioLink username={publicBioUsername} />;
   }
 
   if (isLoading) {
@@ -88,6 +126,19 @@ function AppContent() {
             <ProfileSettings />
           ) : activeItem === 'analytics' ? (
             <Analytics />
+          ) : activeItem === 'wame' ? (
+            <WaBuilder />
+          ) : activeItem === 'smartlink' ? (
+            <SmartLinkTools />
+
+          ) : activeItem === 'products' ? (
+            <ProductsManager />
+          ) : activeItem === 'orders' ? (
+            <OrdersManager />
+          ) : activeItem === 'wallet' ? (
+            <WalletManager />
+          ) : activeItem === 'biolink' ? (
+            <BioLinkBuilder />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400">
               <div className="text-center max-w-md bg-white p-8 rounded-3xl shadow-sm border border-gray-100 mx-4">

@@ -1,5 +1,4 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
     // Helper function
@@ -13,16 +12,13 @@ service cloud.firestore {
 
     match /admins/{adminId} {
       allow read: if true;
-      // Allow create if auth and sets correct userId
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      // Allow update/delete if owner
       allow update, delete: if isOwner(resource.data.userId);
     }
 
     match /campaigns/{campaignId} {
       allow read: if true;
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      // Allow owner to update everything. Allow public to update stats only.
       allow update: if isOwner(resource.data.userId) || 
                     (
                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['periodClicks', 'totalClicks', 'dailyClicks', 'adminStats', 'deviceStats', 'hourlyStats', 'locationStats'])
@@ -31,10 +27,47 @@ service cloud.firestore {
     }
 
     match /leads/{leadId} {
-      // Anyone can create a lead (from public form)
       allow create: if true;
-      // Only the owner of the campaign can read/update their leads
       allow read, update, delete: if isOwner(resource.data.userId);
+    }
+
+    match /walinks/{linkId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId) || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks']);
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    match /smartlinks/{linkId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId) || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks']);
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    match /biolinks/{linkId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(resource.data.userId) || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks', 'views', 'blocks']);
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isOwner(resource.data.userId);
+    }
+    
+    match /orders/{orderId} {
+      allow read: if true; 
+      allow create: if true;
+      allow update, delete: if isOwner(resource.data.userId);
+    }
+
+    match /pageBlocks/{blockId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.creatorId == request.auth.uid;
+      allow update, delete: if isOwner(resource.data.creatorId);
     }
   }
 }

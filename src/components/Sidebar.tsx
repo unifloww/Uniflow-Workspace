@@ -2,7 +2,7 @@ import React from 'react';
 import { 
   LayoutDashboard, UserCog, GitMerge, FileText, BarChart2, 
   Link as LinkIcon, CreditCard, ShoppingBag, ClipboardList, Wallet, Link2, MessageCircle,
-  Paintbrush, Globe, DollarSign, BookOpen, LifeBuoy, User, X, Shuffle
+  Paintbrush, Globe, DollarSign, BookOpen, LifeBuoy, User, X, Shuffle, LayoutTemplate
 } from 'lucide-react';
 
 const menuCategories = [
@@ -25,6 +25,7 @@ const menuCategories = [
       { id: 'saldo', icon: Wallet, label: 'Saldo', sub: 'Wallet dan withdraw' },
       { id: 'smartlink', icon: Link2, label: 'Smart Link Tools', sub: 'Shortlink dan QR' },
       { id: 'wame', icon: MessageCircle, label: 'WA.me Builder', sub: 'Pembuat link WhatsApp' },
+      { id: 'biolink', icon: LayoutTemplate, label: 'Link in Bio', sub: 'Mini landing page' },
     ]
   },
   {
